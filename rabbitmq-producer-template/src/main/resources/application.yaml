@@ -1,0 +1,63 @@
+
+
+
+server: 
+  port: 8082
+  
+spring: 
+  ## ==============================================================================
+  ## DB(PostgreSQL) Connection For R2DBC:[skt_station_db]
+  ## ==============================================================================
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/postgres?schema=rabbitmq
+    username: postgres
+    password: postgres
+    pool:
+      max-create-connection-time: 2s
+      initial-size: 3
+      max-size: 5
+      
+    ## ==============================================================================
+    ## Message Broker(rabbitMQ) Connection to rabbitMQ & exchange, queue naming
+    ##                          * adjust "...spring.rabbitmq.host" & 
+    ##                            "...spring.rabbitmq.port" &
+    ##                            "...spring.rabbitmq.username" & 
+    ##                            "...spring.rabbitmq.password" & 
+    ##                            for expected rabbitMQ server which want to connect
+    ##                          * adjust "...bindings.<channel-name>"
+    ##                            <channel-name> for expected channel-name which want to create
+    ##                          * adjust "...bindings.<channel-name>.<destination>"
+    ##                            <destination> for expected queue name which want to create   
+    ## ==============================================================================
+    stream:
+      binders:
+        default-rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: localhost
+                port: 5672
+                username: admin
+                password: admin
+      bindings:
+        acceptSignal-out-0:
+          binder: default-rabbit
+          destination: signal-accepted
+          # group: accepted
+        acceptSignal-in-0:
+          binder: default-rabbit
+          destination: signal-accepted
+          # group: signal-accepted
+          group: accepted
+#      rabbit:
+#        bindings:
+#          acceptSignal-in-0:
+#            consumer:
+#              max-attempts: 3
+#              acknowledge-mode: MANUAL
+
+
+    function:
+      definition: signalAccepted
+          
