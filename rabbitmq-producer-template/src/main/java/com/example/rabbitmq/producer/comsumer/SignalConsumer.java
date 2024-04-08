@@ -33,7 +33,7 @@ public class SignalConsumer {
 			// [Step]: 確認訊息處理完成, ACK message
 			try {
 				// CASE: 確認訊息
-				channel.basicAck(deliveryTag, false);
+				channel.basicAck(deliveryTag, true);
 				
 				// CASE: 拒絕訊息
 				// channel.basicReject(deliveryTag, false);
