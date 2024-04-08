@@ -39,7 +39,7 @@ public class TestController {
 					.id("001")
 					.name("name")
 					.build();
-			streamBridge.send(CHANNEL_NAME2, MessageBuilder.withPayload(dto).build());
+			streamBridge.send(BINDING_NAME, MessageBuilder.withPayload(dto).build());
 		} catch (Exception error) {
 			error.printStackTrace();
 		}

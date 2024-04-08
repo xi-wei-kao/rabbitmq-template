@@ -16,7 +16,8 @@ spring:
       max-create-connection-time: 2s
       initial-size: 3
       max-size: 5
-      
+
+  cloud: 
     ## ==============================================================================
     ## Message Broker(rabbitMQ) Connection to rabbitMQ & exchange, queue naming
     ##                          * adjust "...spring.rabbitmq.host" & 
@@ -29,6 +30,9 @@ spring:
     ##                          * adjust "...bindings.<channel-name>.<destination>"
     ##                            <destination> for expected queue name which want to create   
     ## ==============================================================================
+    ## `spring.cloud.function.definition: <bean-name>`  |-> 對應 class 方法的 bean 名稱、多筆以分號分隔
+    function:
+      definition: acceptSignal
     stream:
       binders:
         default-rabbit:
@@ -44,20 +48,20 @@ spring:
         acceptSignal-out-0:
           binder: default-rabbit
           destination: signal-accepted
-          # group: accepted
-        acceptSignal-in-0:
+        acceptSignal-in-0: 
           binder: default-rabbit
           destination: signal-accepted
-          # group: signal-accepted
-          group: accepted
-#      rabbit:
-#        bindings:
-#          acceptSignal-in-0:
-#            consumer:
-#              max-attempts: 3
-#              acknowledge-mode: MANUAL
+          group: signal-accepted
+          consumer:
+            batch-mode: true
+      rabbit:
+        bindings:
+          acceptSignal-in-0:
+            consumer:
+              enable-batching: true
+              batch-size: 5
+              receive-timeout: 200
+              max-attempts: 3
+              acknowledge-mode: MANUAL
 
-
-    function:
-      definition: signalAccepted
           
